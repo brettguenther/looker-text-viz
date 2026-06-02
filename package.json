@@ -1,0 +1,26 @@
+{
+  "name": "looker-visualization-text-tile",
+  "version": "1.0.0",
+  "description": "Text Tile Custom Visualization for Looker",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "watch": "webpack --watch --mode development",
+    "dev": "webpack serve --hot --mode development"
+  },
+  "dependencies": {
+    "css-loader": "^6.8.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "styled-components": "6.1.8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-react": "^7.9.4",
+    "babel-loader": "^8.1.0",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.2.3"
+  }
+}
