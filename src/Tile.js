@@ -16,6 +16,37 @@ const paddingPresets = {
   large: '28px'
 };
 
+// Safe, lightweight regex-based Markdown-to-HTML parser with strict XSS escaping
+const renderMarkdown = (text) => {
+  if (typeof text !== 'string') return '';
+  
+  // Strict HTML entity escape (XSS prevention)
+  let escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+  // Bold: **text** or __text__
+  escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  escaped = escaped.replace(/__(.*?)__/g, '<strong>$1</strong>');
+
+  // Italic: *text* or _text_
+  escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  escaped = escaped.replace(/_(.*?)_/g, '<em>$1</em>');
+
+  // Inline Code: `code`
+  escaped = escaped.replace(/`(.*?)`/g, '<code style="font-family: Fira Code, monospace; background-color: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 4px; font-size: 0.88em; color: #374151; border: 1px solid rgba(0,0,0,0.04);">$1</code>');
+
+  // Paragraph split on double newline, line breaks on single newline
+  const paragraphs = escaped.split(/\n{2,}/);
+  return paragraphs.map(p => {
+    const lineBreakFormatted = p.replace(/\n/g, '<br/>');
+    return `<p style="margin-top: 0; margin-bottom: 14px; line-height: inherit; font-size: inherit;">${lineBreakFormatted}</p>`;
+  }).join('');
+};
+
 const TileContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -63,9 +94,9 @@ const Header = styled.div`
   color: ${props => props.fontColor};
   font-weight: ${props => props.fontWeight};
   text-align: ${props => props.alignment};
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   box-sizing: border-box;
   width: 100%;
 `;
@@ -77,6 +108,7 @@ const MainText = styled.div`
   font-weight: ${props => props.fontWeight};
   text-align: ${props => props.alignment};
   text-transform: ${props => props.textTransform};
+  line-height: ${props => props.lineHeight};
   width: 100%;
   box-sizing: border-box;
 
@@ -107,6 +139,11 @@ const MainText = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
   `}
+
+  /* Ensure paragraph styles inherit perfectly */
+  p:last-child {
+    margin-bottom: 0 !important;
+  }
 `;
 
 const Subtext = styled.div`
@@ -115,7 +152,7 @@ const Subtext = styled.div`
   color: ${props => props.fontColor};
   font-weight: ${props => props.fontWeight};
   text-align: ${props => props.alignment};
-  margin-top: 6px;
+  margin-top: 8px;
   width: 100%;
   box-sizing: border-box;
   white-space: normal;
@@ -142,6 +179,8 @@ const Tile = ({ data, config }) => {
   const textAlignment = config.text_alignment || 'left';
   const textWrapping = config.text_wrapping || 'wrap';
   const textTransform = config.text_transform || 'none';
+  const markdownMode = config.markdown_mode !== undefined ? config.markdown_mode : true;
+  const lineHeight = config.line_height || '1.6';
 
   const showSubtext = config.show_subtext !== undefined ? config.show_subtext : true;
   const subtextFontSize = config.subtext_font_size || '14px';
@@ -197,8 +236,16 @@ const Tile = ({ data, config }) => {
         alignment={textAlignment}
         wrapping={textWrapping}
         textTransform={textTransform}
+        lineHeight={lineHeight}
       >
-        {text}
+        {markdownMode ? (
+          <div 
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(text) }} 
+            style={{ width: '100%', boxSizing: 'border-box' }}
+          />
+        ) : (
+          text
+        )}
       </MainText>
 
       {showSubtext && subtext && (

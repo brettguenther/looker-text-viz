@@ -209,6 +209,27 @@ const vizConfig = {
       section: 'Text',
       order: 16,
     },
+    markdown_mode: {
+      type: 'boolean',
+      label: 'Markdown',
+      default: true,
+      section: 'Text',
+      order: 17,
+    },
+    line_height: {
+      type: 'string',
+      label: 'LineHeight',
+      default: '1.6',
+      display: 'select',
+      values: [
+        { 'Normal': 'normal' },
+        { 'Comfortable (1.4)': '1.4' },
+        { 'Readable (1.6)': '1.6' },
+        { 'Spacious (1.8)': '1.8' }
+      ],
+      section: 'Text',
+      order: 18,
+    },
 
     // Subtext Settings
     show_subtext: {
