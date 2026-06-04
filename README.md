@@ -1,6 +1,8 @@
-# Looker Polished Text Tile Custom Visualization
+# Looker Text Tile Custom Visualization
 
-A Looker Custom Visualization called **Text Tile** (`text_tile`). This visualization renders text dimensions in a polished, executive-friendly card format with fine-grained styling controls, dynamic typography imports, responsive layouts, and advanced text wrapping.
+A Looker Custom Visualization **Text Tile** (`text_tile`) that renders text dimensions in a polished, executive-friendly card format with fine-grained styling controls, dynamic typography imports, responsive layouts, and advanced text wrapping.
+
+![Text Tile Visualization Preview](example-visual.png)
 
 ---
 

@@ -453,6 +453,15 @@ looker.plugins.visualizations.add({
   updateAsync: function (data, element, config, queryResponse, details, done) {
     this.clearErrors();
 
+    // Ensure our container is attached to the DOM (it can get removed when errors are cleared/added)
+    if (!this.container || !element.contains(this.container)) {
+      this.container = element.appendChild(document.createElement('div'));
+      this.container.style.width = '100%';
+      this.container.style.height = '100%';
+      this.container.style.overflow = 'auto';
+      this.container.style.boxSizing = 'border-box';
+    }
+
     if (data.length === 0) {
       this.addError({title: "No Data", message: "This visualization requires data."});
       return done();
